@@ -1,30 +1,42 @@
+import { NgLocalization } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { OidcSecurityService } from 'angular-auth-oidc-client';
 
 declare let google: any;
 
 @Component({
   selector: 'app-root',
   template: `
-    <div
-    id="g_id_onload"
-    data-client_id="749824175933-egjopdpm4n3b41rb05t1l0rjvhbqbe1o.apps.googleusercontent.com"
-    data-cancel_on_tap_outside="false"
-    data-callback="handleCredentialResponse">
-    </div>
+    <h1>Welcome <span *ngIf="isAuthenticated" style = "color: red">{{name}}</span></h1>
+    <h2 *ngIf="isAuthenticated">Your Bearer Token is <span style = "color: red">{{token}}</span></h2>
+    <button *ngIf="!isAuthenticated" (click) = "login()">Click here to sign in with Google</button>
+    <button *ngIf="isAuthenticated" (click) = "logout()">Click here to logout</button>
   `,
   styles: []
 })
 export class AppComponent implements OnInit{
-  title = 'google-login';
+  token = "";
+  name = "";
+  isAuthenticated = false;
+  imageUrl = ""
 
-  constructor(){}
+  constructor(public oidcSecurityService: OidcSecurityService) {}
 
-  ngOnInit(): void {
-    
+  ngOnInit() {
+    this.oidcSecurityService.checkAuth().subscribe(({ isAuthenticated, userData, idToken }) => {
+      this.isAuthenticated = isAuthenticated;
+      this.token = idToken;
+      this.name = userData.given_name;
+      this.imageUrl = userData.picture;
+    });
   }
 
-  response(response: any){
-    console.log("teste");
-    console.log(response);
+  login() {
+    this.oidcSecurityService.authorize();
+  }
+
+  logout() {
+    this.oidcSecurityService.logoff();
+    location.reload();
   }
 }
