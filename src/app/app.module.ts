@@ -15,7 +15,7 @@ import { AppComponent } from './app.component';
       config: {
         authority: 'https://accounts.google.com',
         redirectUrl: window.location.origin,
-        postLogoutRedirectUri: window.location.origin+"#",
+        postLogoutRedirectUri: window.location.origin,
         clientId: '749824175933-egjopdpm4n3b41rb05t1l0rjvhbqbe1o.apps.googleusercontent.com',
         scope: 'openid profile email',
         responseType: 'id_token token',
